@@ -1,0 +1,53 @@
+# Keil MDK build outputs
+Objects/
+Listings/
+*.lst
+*.obj
+*.htm
+*.build_log.htm
+*.dep
+*.crf
+*.d
+*.o
+*.axf
+*.hex
+*.bin
+*.iex
+*.map
+*.lnp
+*.plg
+*.tra
+*.sct
+
+# Keil MDK user preferences
+*.uvguix.*
+*.uvgui.*
+*.scvd
+JLinkLog.txt
+JLinkSettings.ini
+
+# Debug configuration
+DebugConfig/
+
+# Editor / IDE
+.vscode/
+*.suo
+*.user
+*.sdf
+*.opensdf
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary / backup files
+*.bak
+*.tmp
+*~
+
+# Keil backup copies (files with (1) suffix)
+*(1).*
+*(2).*
+Project.uvguix.*
+Project(1).*
