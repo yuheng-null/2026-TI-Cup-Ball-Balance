@@ -259,7 +259,7 @@ HSE (8MHz 外部晶振)
 | 死区宽度        | ≤4μs                           |
 
 **PWM 到角度映射**：
-$$\text{pulse\_us} = 500 + \frac{\text{angle}}{180} \times 2000$$
+$$\mathrm{pulse\_us} = 500 + \frac{\mathrm{angle}}{180} \times 2000$$
 
 | 角度 | 脉宽   | 说明             |
 | ---- | ------ | ---------------- |
@@ -632,20 +632,20 @@ typedef struct {
 设管道倾角为 $\theta$（以水平为基准），球质量为 $m$，球半径为 $r$，管道对球的摩擦系数为 $\mu$。
 
 球沿管道的加速度可近似为（纯滑动）：
-$$a = g \cdot \sin\theta - \mu g \cdot \cos\theta \cdot \text{sgn}(v)$$
+$$a = g \cdot \sin\theta - \mu g \cdot \cos\theta \cdot \operatorname{sgn}(v)$$
 
 当 $\theta$ 较小（≤20°）时，$\sin\theta \approx \theta$，$\cos\theta \approx 1$：
-$$a \approx g\theta - \mu g \cdot \text{sgn}(v)$$
+$$a \approx g\theta - \mu g \cdot \operatorname{sgn}(v)$$
 
-以上是纯滑动假设。实际上钢球在管道内是**纯滚动**，转动惯量 $J = \frac{2}{5}mr^2$（实心球），等效质量为 $m_{\text{eff}} = m + J/r^2 = \frac{7}{5}m$，加速度变为：
+以上是纯滑动假设。实际上钢球在管道内是**纯滚动**，转动惯量 $J = \frac{2}{5}mr^2$（实心球），等效质量为 $m_{\mathrm{eff}} = m + J/r^2 = \frac{7}{5}m$，加速度变为：
 
-$$a = \frac{5}{7} g \theta - \mu' g \cdot \text{sgn}(v)$$
+$$a = \frac{5}{7} g \theta - \mu^{\prime} g \cdot \operatorname{sgn}(v)$$
 
 这是一个**二阶积分系统**——舵机角度（≈θ）到球位置（x）的传递函数为：
 
 $$G(s) = \frac{X(s)}{\Theta(s)} \approx \frac{5g}{7s^2}$$
 
-> $\frac{5}{7}$ 这个系数在实践中不影响 PID 调试——后面的机械传动系数 $K_{\text{mech}}$ 也不确定，两个未知常数的乘积最终被 PID 增益吸收。写出来主要是为了模型完整。
+> $\frac{5}{7}$ 这个系数在实践中不影响 PID 调试——后面的机械传动系数 $K_{\mathrm{mech}}$ 也不确定，两个未知常数的乘积最终被 PID 增益吸收。写出来主要是为了模型完整。
 
 该系统具有：
 - **双积分特性**：没有自稳定性，必须闭环控制
@@ -655,9 +655,9 @@ $$G(s) = \frac{X(s)}{\Theta(s)} \approx \frac{5g}{7s^2}$$
 #### 6.1.2 舵机到管道倾角的传动关系
 
 舵机脉冲 $p$（μs）到管道倾角 $\theta$（°）的映射取决于机械连杆设计：
-$$\theta = f(p) \approx K_\text{mech} \times (p - 1500)$$
+$$\theta = f(p) \approx K_{\mathrm{mech}} \times (p - 1500)$$
 
-其中 $K_\text{mech}$ 为机械传动系数，由连杆长度、支点位置决定。本系统中 $K_\text{mech}$ 未精确标定，由 PID 参数隐式吸收。
+其中 $K_{\mathrm{mech}}$ 为机械传动系数，由连杆长度、支点位置决定。本系统中 $K_{\mathrm{mech}}$ 未精确标定，由 PID 参数隐式吸收。
 
 ### 6.2 PID 控制器设计
 
@@ -717,18 +717,18 @@ STM32F103C8T6 是 Cortex-M3，没有硬件 FPU。用浮点的话编译器会插�
 一开始以为是参数问题，调了两天。后来意识到不是参数的问题——94mm 的阶跃误差，哪个 PD 都受不了。软件层面的解决方案很简单：不让目标直接跳变。
 
 **实际遇到的问题**：当目标从 +50mm 突然切换到 -44mm 时，误差瞬间变为 94mm。PID 的 D 项（微分项）计算的是误差变化率：
-$$D_\text{output} = K_d \times \frac{\Delta e}{\Delta t}$$
+$$D_\mathrm{output} = K_d \times \frac{\Delta e}{\Delta t}$$
 
-由于目标跳变，$\Delta e = 94\text{mm}$，$\Delta t = 20\text{ms}$，若 $K_d = 2.0$：
-$$D_\text{output} \approx 2.0 \times \frac{94}{0.02} \times \frac{1}{100} \approx 94 \text{ μs delta}$$
+由于目标跳变，$\Delta e = 94\ \mathrm{mm}$，$\Delta t = 20\ \mathrm{ms}$，若 $K_d = 2.0$：
+$$D_\mathrm{output} \approx 2.0 \times \frac{94}{0.02} \times \frac{1}{100} \approx 94\ \mathrm{\mu s}$$
 
 但实际微分项计算在单周期内只看到 -94mm 的误差变化，所以：
 
 第 1 周期：`prev_error` 约为 0（+50 目标时已稳定），`new_error = -44 - (球实际在+50) = -94mm`
-$$\Delta e = -94 - 0 = -94\text{mm}$$
-$$D = 200 \times (-94) / 100 = -188\text{ μs delta}$$
+$$\Delta e = -94 - 0 = -94\ \mathrm{mm}$$
+$$D = 200 \times (-94) / 100 = -188\ \mathrm{\mu s}$$
 
-加上 P 项：$P = 80 \times (-94) / 100 = -75\text{ μs delta}$
+加上 P 项：$P = 80 \times (-94) / 100 = -75\ \mathrm{\mu s}$
 
 合计约 -263 μs，已经超出 `SERVO_SAFE_PULSE_DELTA_US` (±222 μs)。舵机被瞬间推到极限位置，球直接飞出去。
 
@@ -747,7 +747,7 @@ error = ramp_target_mm - measured_mm;
 ```
 
 84mm 的阶跃被拆分成 28 个 3mm 小步，每步 20ms，总共 560ms 平滑过渡。PID 在每个周期看到的最大误差变化约为 3mm，微分项输出量级：
-$$D_\text{output} \approx 200 \times 3 / 100 = 6\text{ μs delta}$$
+$$D_\mathrm{output} \approx 200 \times 3 / 100 = 6\ \mathrm{\mu s}$$
 
 完全在安全范围内，球平稳跟随目标移动。
 
