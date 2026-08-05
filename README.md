@@ -632,14 +632,14 @@ typedef struct {
 设管道倾角为 $\theta$（以水平为基准），球质量为 $m$，球半径为 $r$，管道对球的摩擦系数为 $\mu$。
 
 球沿管道的加速度可近似为（纯滑动）：
-$$a = g \cdot \sin\theta - \mu g \cdot \cos\theta \cdot \operatorname{sgn}(v)$$
+$$a = g \cdot \sin\theta - \mu g \cdot \cos\theta \cdot \mathrm{sgn}(v)$$
 
 当 $\theta$ 较小（≤20°）时，$\sin\theta \approx \theta$，$\cos\theta \approx 1$：
-$$a \approx g\theta - \mu g \cdot \operatorname{sgn}(v)$$
+$$a \approx g\theta - \mu g \cdot \mathrm{sgn}(v)$$
 
 以上是纯滑动假设。实际上钢球在管道内是**纯滚动**，转动惯量 $J = \frac{2}{5}mr^2$（实心球），等效质量为 $m_{\mathrm{eff}} = m + J/r^2 = \frac{7}{5}m$，加速度变为：
 
-$$a = \frac{5}{7} g \theta - \mu^{\prime} g \cdot \operatorname{sgn}(v)$$
+$$a = \frac{5}{7} g \theta - \mu^{\prime} g \cdot \mathrm{sgn}(v)$$
 
 这是一个**二阶积分系统**——舵机角度（≈θ）到球位置（x）的传递函数为：
 
